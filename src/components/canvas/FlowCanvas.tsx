@@ -137,8 +137,8 @@ export const FlowCanvas: React.FC = () => {
         onNodesDelete={handleNodesDelete}
         nodeTypes={nodeTypes}
         onNodeClick={(_, node) => {
-          setSelectedNodeId(node.id);
           setFlowNodes(nodes);
+          setSelectedNodeId(node.id);
         }}
         onPaneClick={() => setSelectedNodeId(null)}
         deleteKeyCode={['Backspace', 'Delete']}
