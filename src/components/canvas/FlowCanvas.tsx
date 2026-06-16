@@ -20,7 +20,6 @@ import type { ServiceNodeData } from '../../types';
 
 import { AlertCircle, Network, RefreshCw } from 'lucide-react';
 
-
 const nodeTypes = {
   service: ServiceNode,
 };
@@ -36,13 +35,15 @@ export const FlowCanvas: React.FC = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState<Node<ServiceNodeData>>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
 
-  // Sync ReactFlow nodes & edges with React Query graph data
+  const { setNodes: setFlowNodes, setEdges: setFlowEdges } = useFlowStore();
+  const storeNodes = useFlowStore((s) => s.nodes);
+
+  // Sync API data → ReactFlow + Zustand store
   useEffect(() => {
     if (data) {
       setNodes(data.nodes || []);
       setEdges(data.edges || []);
 
-      // Auto fitView on initial load after nodes set
       const timer = setTimeout(() => {
         fitView({ duration: 500, padding: 0.2 });
       }, 100);
@@ -50,9 +51,7 @@ export const FlowCanvas: React.FC = () => {
     }
   }, [data, setNodes, setEdges, fitView]);
 
-  // Sync nodes & edges to shared Zustand store
-  const { setNodes: setFlowNodes, setEdges: setFlowEdges } = useFlowStore();
-
+  // Sync ReactFlow nodes → Zustand store
   useEffect(() => {
     setFlowNodes(nodes);
   }, [nodes, setFlowNodes]);
@@ -61,8 +60,12 @@ export const FlowCanvas: React.FC = () => {
     setFlowEdges(edges);
   }, [edges, setFlowEdges]);
 
-  // Fit view subscription listener
+  // Sync Zustand store → ReactFlow (for inspector edits)
+  useEffect(() => {
+    setNodes(storeNodes);
+  }, [storeNodes, setNodes]);
 
+  // Fit view event listener
   useEffect(() => {
     const handleFitViewEvent = () => {
       fitView({ duration: 400, padding: 0.15 });
@@ -71,9 +74,6 @@ export const FlowCanvas: React.FC = () => {
     return () => window.removeEventListener('reactflow-fit-view', handleFitViewEvent);
   }, [fitView]);
 
-
-
-  // Deselect inspector if node gets deleted
   const handleNodesDelete = (deletedNodes: Node<ServiceNodeData>[]) => {
     if (deletedNodes.some((n) => n.id === selectedNodeId)) {
       setSelectedNodeId(null);
