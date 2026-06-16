@@ -19,6 +19,9 @@ import { ServiceNode } from './nodes/ServiceNode';
 import type { ServiceNodeData } from '../../types';
 import { AlertCircle, Network, RefreshCw } from 'lucide-react';
 
+// Keep Zustand store actions stable across renders
+
+
 const nodeTypes = { service: ServiceNode };
 
 export const FlowCanvas: React.FC = () => {
