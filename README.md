@@ -2,7 +2,7 @@
 
 A responsive "App Graph Builder" UI built with React + Vite + TypeScript.
 
-![App Preview](https://github.com/greeshsutar/Graph-Builder/raw/main/public/preview.png)
+
 
 Live -Link - https://graph-builder-five.vercel.app/
 
